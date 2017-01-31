@@ -1,10 +1,11 @@
 class TicTacToe {
     constructor() {
+        this.size = 3;
         this.current_player = 'x';
         this.board = [];
-        for (var i = 0; i < 3; i++) {
+        for (var i = 0; i < this.size; i++) {
             this.board[i] = [];
-            for (var j = 0; j < 3; j++) {
+            for (var j = 0; j < this.size; j++) {
                 this.board[i][j] = null;
             }
         }
@@ -17,62 +18,45 @@ class TicTacToe {
     nextTurn(rowIndex, columnIndex) {
         if (this.board[rowIndex][columnIndex] == null) {
             this.board[rowIndex][columnIndex] = this.current_player;
-            (this.current_player == 'x') ? this.current_player = 'o' : this.current_player = 'x';
+            this.current_player = (this.current_player == 'x') ? 'o' : 'x';
         }
     }
 
     isFinished() {
-        if (this.getWinner() || this.isDraw()) {
-            return true;
-        }
-        return false;
+        return this.getWinner() !== null || this.isDraw();
     }
 
     getWinner() {
-        for (var i = 0; i < 3; i++) {
-            var row_count = 0;
-            for (var j = 0; j < 3; j++) {
-                if (this.board[i][j] === this.board[i][0]) {
-                    row_count++;
-                    if (row_count == 3 && this.board[i][j] != null) {
-                        return this.board[i][j];
-                    }
-                }
-            }
-        }
-        for (var j = 0; j < 3; j++) {
-            var col_count = 0;
-            for (var i = 0; i < 3; i++) {
-                if (this.board[i][j] == this.board[0][j]) {
-                    col_count++;
-                    if (col_count == 3 && this.board[i][j] != null) {
-                        return this.board[i][j];
-                    }
-                }
-            }
-
-        }
         var main_diag_count = 0;
-        for (var i = 0; i < 3; i++) {
-            for (var j = 0; j < 3; j++) {
+        var secondary_diag_count = 0;
+        for(var i = 0; i < this.size; i++) {
+            var row_count = 0;
+            var col_count = 0;
+            for(var j = 0; j < this.size; j++) {
+                if (this.board[i][j] == this.board[i][0]) {
+                    row_count++;
+                    if (row_count == this.size && this.board[i][j] !== null) {
+                        return this.board[i][j];
+                    }
+                }
+                if (this.board[j][i] == this.board[0][i]) {
+                    col_count++;
+                    if (col_count == this.size && this.board[j][i] !== null) {
+                        return this.board[j][i];
+                    }
+                }
                 if (j == i) {
                     if (this.board[i][j] == this.board[0][0]) {
                         main_diag_count++;
-                        if (main_diag_count == 3 && main_diag_count != null) {
+                        if (main_diag_count == this.size && this.board[i][j] !== null) {
                             return this.board[i][j];
                         }
                     }
                 }
-            }
-
-        }
-        var secondary_diag_count = 0;
-        for (var i = 0; i < 3; i++) {
-            for (var j = 0; j < 3; j++) {
-                if (j == (2 - i)) {
-                    if (this.board[i][j] == this.board[0][2]) {
+                if (j == (this.size  - i - 1)) {
+                    if (this.board[i][j] == this.board[0][this.size - 1]) {
                         secondary_diag_count++;
-                        if (secondary_diag_count == 3 && secondary_diag_count != null) {
+                        if (secondary_diag_count == this.size && this.board[i][j] !== null) {
                             return this.board[i][j];
                         }
                     }
@@ -83,15 +67,11 @@ class TicTacToe {
     }
 
     noMoreTurns() {
-        var flag = true;
-        for (var i = 0; i < 3; i++) {
-            for (var j = 0; j < 3; j++) {
-                if (this.board[i][j] == null) {
-                    flag = false;
-                }
-            }
+        for (var i = 0; i < this.size; i++) {
+            if (this.board[i].includes(null))
+                return false;
         }
-        return flag;
+        return true;
     }
 
     isDraw() {
